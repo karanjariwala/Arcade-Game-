@@ -1,3 +1,4 @@
+var level=0;
 // Enemies our player must avoid
 var Enemy = function(xCor,yCor) {
     // Variables applied to each of our instances go here,
@@ -43,13 +44,13 @@ Player.prototype.update=function(){};
 
 Player.prototype.handleInput=function(keyPressed){
     console.log(this.x,this.y);
-       if(keyPressed=='left'&& this.x>0)
+       if(keyPressed=='left'&& this.x>0&&!gameOver)
         this.x-=100;
-    else if (keyPressed=='up'&&this.y>0)
+    else if (keyPressed=='up'&&this.y>0&&!gameOver)
         this.y-=50;
-    else if (keyPressed=='right'&&this.x<=300)
+    else if (keyPressed=='right'&&this.x<=300&&!gameOver)
         this.x+=100;
-    else if(keyPressed=='down'&&this.y<=300)
+    else if(keyPressed=='down'&&this.y<=300&&!gameOver)
         this.y+=50;
      
 
@@ -66,13 +67,30 @@ var checkCollisions=function(){
     {
         if(dist(player.x,allEnemies[i].x,player.y,allEnemies[i].y)<=50)
         {
-            alert('over');
+            alert('over'+'level you reached is '+level);
+            allEnemies=[];
+            player=null;
+            level=0;
+            gameOver=true;
             
             //alert('gameOver'+you reached level+newGame.level);            
         }
 
 
 
+    }
+}
+
+var gameWin=function()
+{
+    if(player.y==0)
+    {   
+
+        alert('win');
+        level++;
+        player.x=(Math.floor((Math.random() * 5) )*100);
+        player.y=350;
+        //document.removeEventListener('keyup',function(e){keyUp(e)});
     }
 }
 
@@ -84,44 +102,39 @@ var dist=function(x1,x2,y1,y2)
 
 }
 
-var bugLine1= new Enemy(2,50);
-var bugLine2=new Enemy(2,150);
-var bugLine3=new Enemy(2,225);
+var bugLine1= new Enemy(1,50);
+var bugLine2=new Enemy(1,150);
+var bugLine3=new Enemy(1,225);
 
 
-
+var gameOver=false;
 
 var player= new Player((Math.floor((Math.random() * 5) )*100),350);
-
-
-// NewGame.prototype.addBugs=function()
-// {
-//                 allEnemies.push(this.bugLine1);
-
-//             allEnemies.push(this.bugLine2);
-
-//             allEnemies.push(this.bugLine3)
-
-
-
-        
-            
-// }
 var allEnemies=[];
-allEnemies.push(bugLine1)
-allEnemies.push(bugLine2)
-allEnemies.push(bugLine3)
 
-//newGame.addBugs();
-//allEnemies.push(player.bugLine1);
+var insertBugs=function()
+{
+setTimeout(function(){allEnemies.push(bugLine1)},1000)
+setTimeout(function(){allEnemies.push(bugLine2)},2000)
+setTimeout(function(){allEnemies.push(bugLine3)},3000)
+};
+
+var checkBugs=function()
+{
+    if(bugLine1.x>400||bugLine2.x>400||bugLine3.x>400)
+        {   bugLine1.x=(Math.floor(Math.random()*4))*50;
+            bugLine2.x=(Math.floor(Math.random()*4))*50;
+            bugLine3.x=(Math.floor(Math.random()*4))*50;
+            }
+}
 
 
-
-
+insertBugs();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keyup', function(e){keyUp(e)});
+    var keyUp=function(e) {
     var allowedKeys = {
         37: 'left',
         38: 'up',
@@ -131,4 +144,4 @@ document.addEventListener('keyup', function(e) {
 
          //console.log(e.keyCode);
     player.handleInput(allowedKeys[e.keyCode]);
-});
+};
